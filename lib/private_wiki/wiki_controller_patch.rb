@@ -36,7 +36,8 @@ module PrivateWiki
 
       def change_privacy
         find_existing_page
-        @page.update_attribute :private, params[:private]
+        page_ids = @page.self_and_descendants.map(& :id)
+        @page.class.where("id in (?)", page_ids).update_all(private: params[:private])
         redirect_to project_wiki_page_path(@project, @page.title)
       end
 

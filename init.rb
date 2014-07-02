@@ -3,6 +3,11 @@ require_dependency 'private_wiki/hook'
 
 Rails.configuration.to_prepare do
 
+  require_dependency 'wiki'
+  unless Wiki.included_modules.include? PrivateWiki::WikiPatch
+    Wiki.send(:include, PrivateWiki::WikiPatch)
+  end
+
   require_dependency 'wiki_page'
   unless WikiPage.included_modules.include? PrivateWiki::WikiPagePatch
     WikiPage.send(:include, PrivateWiki::WikiPagePatch)
@@ -11,6 +16,16 @@ Rails.configuration.to_prepare do
   require_dependency 'wiki_controller'
   unless WikiController.included_modules.include? PrivateWiki::WikiControllerPatch
     WikiController.send(:include, PrivateWiki::WikiControllerPatch)
+  end
+
+  require_dependency "wikis_controller"
+  unless WikisController.included_modules.include? PrivateWiki::WikisControllerPatch
+    WikisController.send(:include, PrivateWiki::WikisControllerPatch)
+  end
+
+  require_dependency "search_controller"
+  unless SearchController.included_modules.include? PrivateWiki::SearchControllerPatch
+    SearchController.send(:include, PrivateWiki::SearchControllerPatch)
   end
 
   unless Redmine::WikiFormatting::Macros::Definitions.included_modules.include? PrivateWiki::MacrosPatch
